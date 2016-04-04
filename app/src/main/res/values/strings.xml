@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">Bouwtrillingsmeter</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="gps_alert_dialog_title">Enable GPS</string>
+    <string name="gps_alert_dialog_message">Schakel de GPS in om de huidige locatie te bepalen</string>
+
+
+    <string name="action_cancel">Cancel</string>
+    <string name="action_settings">Settings</string>
+</resources>
