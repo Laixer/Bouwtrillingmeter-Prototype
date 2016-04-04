@@ -58,15 +58,10 @@ public class Location extends AppCompatActivity {
 
                     @Override
                     public void onClick(View v) {
-                        Location.this.finish();
                         // TODO Auto-generated method stub
-                        //Intent myIntent = new Intent(MainActivity.this, Location.class);
-                        //MainActivity.this.startActivity(myIntent);
-                        ///
-                        //Intent intent = new Intent(this, MyActivity.class);
-                        //intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_TASK_ON_HOME);
-                        //startActivity(intent);
-                        //this.finish();
+                        Intent intent = new Intent(Location.this, Graph.class);
+                        startActivity(intent);
+                        Location.this.finish();
                     }
                 });
             }
