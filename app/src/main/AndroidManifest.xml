@@ -21,11 +21,13 @@
             </intent-filter>
         </activity>
         <activity android:name=".Location" />
-
         <activity
             android:name=".Graph"
             android:label="@string/title_activity_graph"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".Settings"
+            android:label="@string/title_activity_settings"></activity>
     </application>
 
 </manifest>
