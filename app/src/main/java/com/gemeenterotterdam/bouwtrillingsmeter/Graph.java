@@ -10,6 +10,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -34,7 +35,6 @@ public class Graph extends AppCompatActivity {
      * The {@link ViewPager} that will host the section contents.
      */
     private ViewPager mViewPager;
-    private Measurement measurement;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,7 +62,6 @@ public class Graph extends AppCompatActivity {
         });
 
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -95,6 +94,7 @@ public class Graph extends AppCompatActivity {
          * fragment.
          */
         private static final String ARG_SECTION_NUMBER = "section_number";
+        private static Measurement measurement;
 
         public PlaceholderFragment() {
         }
@@ -111,17 +111,28 @@ public class Graph extends AppCompatActivity {
             return fragment;
         }
 
+        public void onMeasurementUpdate(float x, float y, float z) {
+            if (getView() != null) {
+                TextView textView = (TextView) getView().findViewById(R.id.calc_result);
+                textView.setText("FFT: X: " + x + ", Y: " + y + ",Z: " + z);
+            }
+        }
+
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_graph, container, false);
             TextView textView = (TextView) rootView.findViewById(R.id.section_label);
             textView.setText(getString(R.string.section_format, getArguments().getInt(ARG_SECTION_NUMBER)));
             textView = (TextView) rootView.findViewById(R.id.calc_result);
-            if (getArguments().getInt(ARG_SECTION_NUMBER) == 1) {
-                textView.setText("FFT: ");
-            } else {
-                textView.setText("");
+
+            if (measurement == null) {
+                measurement = new Measurement(getActivity());
             }
+
+            if (getArguments().getInt(ARG_SECTION_NUMBER) == 1) {
+                measurement.setCallback(this);
+            }
+
             return rootView;
         }
     }

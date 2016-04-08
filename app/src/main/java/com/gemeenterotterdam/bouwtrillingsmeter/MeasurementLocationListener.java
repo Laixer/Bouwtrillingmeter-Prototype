@@ -185,19 +185,14 @@ public class MeasurementLocationListener extends Service implements LocationList
      */
     public void showSettingsAlert() {
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(mContext);
-
-        //Setting Dialog Title
         alertDialog.setTitle(R.string.gps_alert_dialog_title);
-
-        //Setting Dialog Message
         alertDialog.setMessage(R.string.gps_alert_dialog_message);
 
         //On Pressing Setting button
         alertDialog.setPositiveButton(R.string.action_settings, new DialogInterface.OnClickListener() {
 
             @Override
-            public void onClick(DialogInterface dialog, int which)
-            {
+            public void onClick(DialogInterface dialog, int which) {
                 Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
                 mContext.startActivity(intent);
             }
@@ -207,8 +202,7 @@ public class MeasurementLocationListener extends Service implements LocationList
         alertDialog.setNegativeButton(R.string.action_cancel, new DialogInterface.OnClickListener() {
 
             @Override
-            public void onClick(DialogInterface dialog, int which)
-            {
+            public void onClick(DialogInterface dialog, int which) {
                 dialog.cancel();
             }
         });

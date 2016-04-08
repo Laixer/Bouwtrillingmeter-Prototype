@@ -24,6 +24,20 @@ public class Location extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_location);
 
+
+        Button button = (Button) findViewById(R.id.btn_cont);
+        button.setEnabled(true);
+        button.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                // TODO Auto-generated method stub
+                Intent intent = new Intent(Location.this, Graph.class);
+                startActivity(intent);
+                Location.this.finish();
+            }
+        });
+
         MeasurementLocationListener gpsTracker = new MeasurementLocationListener(this);
         if (gpsTracker.getIsGPSTrackingEnabled())
         {

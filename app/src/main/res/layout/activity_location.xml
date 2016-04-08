@@ -66,4 +66,12 @@
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="28dp"
         android:enabled="false" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Toch doorgaan"
+        android:id="@+id/btn_cont"
+        android:layout_alignBottom="@+id/field_country"
+        android:layout_alignParentEnd="true" />
 </RelativeLayout>
