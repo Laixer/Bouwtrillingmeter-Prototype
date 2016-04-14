@@ -25,7 +25,7 @@ public class Measurement extends Service implements SensorEventListener {
         aContext = context;
         if (aContext != null) {
             sensorManager = (SensorManager) aContext.getSystemService(SENSOR_SERVICE);
-            sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION), 1000);
+            sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION), 10000);
         }
     }
 

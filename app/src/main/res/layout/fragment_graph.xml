@@ -23,4 +23,9 @@
         android:layout_below="@+id/section_label"
         android:layout_alignParentStart="true" />
 
+    <com.github.mikephil.charting.charts.LineChart
+        android:id="@+id/chart"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
 </RelativeLayout>
