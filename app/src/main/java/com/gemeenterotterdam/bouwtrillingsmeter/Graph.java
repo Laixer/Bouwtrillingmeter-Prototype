@@ -1,5 +1,6 @@
 package com.gemeenterotterdam.bouwtrillingsmeter;
 
+import android.graphics.Color;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -18,9 +19,17 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.LimitLine;
+import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
@@ -68,8 +77,34 @@ public class Graph extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                /*Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();*/
+
+                String url = "https://www.rotterdam-vlg.com/mail_from_app.php";
+
+                // Request a string response
+                StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+                        new Response.Listener<String>() {
+                            @Override
+                            public void onResponse(String response) {
+
+                                // Result handling
+                                Toast.makeText(Graph.this, "Mail verzonden", Toast.LENGTH_LONG).show();
+
+                            }
+                        }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+
+                        // Error handling
+                        System.out.println("Something went wrong!");
+                        error.printStackTrace();
+
+                    }
+                });
+
+                // Add the request to the queue
+                Volley.newRequestQueue(Graph.this).add(stringRequest);
             }
         });
 
@@ -106,6 +141,7 @@ public class Graph extends AppCompatActivity {
          * fragment.
          */
         private static final String ARG_SECTION_NUMBER = "section_number";
+        private static final int pointLimit = 2;
         private static Measurement measurement;
         private static int SensorUpdate = 0;
         private static Complex[] MeasurementArray = new Complex[128];
@@ -142,17 +178,17 @@ public class Graph extends AppCompatActivity {
 
                 TextView textView = (TextView) getView().findViewById(R.id.calc_result);
                 LineChart chart = (LineChart) getView().findViewById(R.id.chart);
+                YAxis leftAxis = chart.getAxisLeft();
+                Toast alarm = new Toast(getActivity());
 
                 ArrayList<Entry> entries = new ArrayList<>();
                 ArrayList<String> labels = new ArrayList<String>();
 
-                float Fs = 100; //sampling frequency
-                float T = 1/Fs; //sampling period
-                float L = 128; //length of the signal (1.28 second)
+                float Fs = 100;
+                float T = 1/Fs;
+                float L = 128;
 
                 float freq_step = 1/(T*L);
-
-                //double mmsX = (x / (2*Math.PI * (SensorUpdate * freq_step))) * 1000;
 
                 MeasurementArray[SensorUpdate] = new Complex(x, 0);
 
@@ -164,83 +200,47 @@ public class Graph extends AppCompatActivity {
                     double max = 0;
                     double maxFreq = 0;
                     for (int i = 1; i < (MeasurementArrayResult.length/2); i++) {
+                        double rs = (float)MeasurementArrayResult[i].abs()/L;
 
-                        entries.add(new Entry((float)MeasurementArrayResult[i].abs(), i));
-                        labels.add(Double.toString(i * freq_step));
+                        double point = rs * 100;
 
-                        LineDataSet dataset = new LineDataSet(entries, "# of Calls");
-                        dataset.setDrawFilled(true);
-
-                        LineData data = new LineData(labels, dataset);
-                        chart.setData(data); // set the data and list of lables into chart
-                        // chart.setDescription("Description");  // set the description
-                        chart.animateY(100);
-                        chart.invalidate();
-
-                        // double mms = (MeasurementArrayResult[i].abs() / (2*Math.PI * (i * freq_step))) * 1000;
-                        double re = MeasurementArrayResult[i].re()/128;
-                        double im = MeasurementArrayResult[i].im()/128;
-                        MeasurementArrayResult[i] = new Complex(re, im);
-
-                        MeasurementAbsolute[i-1] = 2*(MeasurementArrayResult[i].abs()/L);
-
-                        // System.out.println("mm/s: " + MeasurementAbsolute[i-1] + ", Hz: "  + i * freq_step + ", X: " + x);
-
-                        if (MeasurementAbsolute[i-1] > max) {
-                            max = MeasurementAbsolute[i-1];
-                            maxFreq = i * freq_step;
+                        if (point > pointLimit) {
+                            Toast.makeText(getActivity(), "Alarm", Toast.LENGTH_SHORT).show();
                         }
+
+                        entries.add(new Entry((float)point, i));
+                        labels.add(Double.toString(i * freq_step));
                     }
 
-                    double yy = (max / (2*Math.PI * maxFreq)) * 1000;
+                    LineDataSet dataset = new LineDataSet(entries, "# of Calls");
+                    dataset.setDrawFilled(true);
 
-                    // textView.setText("mm/s: " + yy + ", Hz: "  + maxFreq + ", X: " + x);
-                    // System.out.println("mm/s: " + yy + ", Hz: "  + maxFreq + ", X: " + x);
-                    // FFT.show(MeasurementArrayResult, "Result");
+                    LineData data = new LineData(labels, dataset);
+                    chart.setData(data); // set the data and list of lables into chart
+                    chart.animateY(50);
+                    chart.invalidate();
 
                     SensorUpdate = 0;
                 } else {
                     SensorUpdate++;
                 }
-
-                /*entries.add(new Entry((float)2.3, 0));
-                entries.add(new Entry((float)5.8, 1));
-                entries.add(new Entry((float)0.2, 2));
-                entries.add(new Entry((float)8.9, 3));
-                entries.add(new Entry((float)12.4, 4));
-
-                labels.add("Hz: " + Double.toString(0 * freq_step));
-                labels.add("Hz: " + Double.toString(1 * freq_step));
-                labels.add("Hz: " + Double.toString(2 * freq_step));
-                labels.add("Hz: " + Double.toString(3 * freq_step));
-                labels.add("Hz: " + Double.toString(4 * freq_step));*/
-
-
-                // chart.dr
-
-                // Complex[] x = new Complex[1024];
-
-                // original data
-                //for (int i = 0; i < 1024; i++) {
-                //    x[i] = new Complex(i, 0);
-                //    x[i] = new Complex(-2*Math.random() + 1, 0);
-                //}
-                //show(x, "x");
-
-                // FFT of original data
-                //Complex[] y = fft(x);
-                //show(y, "y = fft(x)");
-
-                // TextView textView = (TextView) getView().findViewById(R.id.calc_result);
-                //textView.setText("FFT: X: " + x + ", Y: " + y + ",Z: " + z);
-                // textView.setText("m2/s: => " + SensorUpdate + ", X: " + x);
             }
         }
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_graph, container, false);
-            // LineChart chart = (LineChart) rootView.findViewById(R.id.chart);
+            LineChart chart = (LineChart) rootView.findViewById(R.id.chart);
+            YAxis leftAxis = chart.getAxisLeft();
+            leftAxis.setAxisMaxValue(6);
+
+            LimitLine ll = new LimitLine(2f, "Verhoogde kans op schade");
+            ll.setLineColor(Color.RED);
+            ll.setLineWidth(2f);
+            ll.setTextColor(Color.BLACK);
+            ll.setTextSize(12f);
+            leftAxis.addLimitLine(ll);
+
             TextView textView = (TextView) rootView.findViewById(R.id.section_label);
             textView.setVisibility(View.INVISIBLE);
             // textView.setText(getString(R.string.section_format, getArguments().getInt(ARG_SECTION_NUMBER)));
