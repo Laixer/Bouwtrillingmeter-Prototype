@@ -10,7 +10,7 @@
 
     <string name="action_cancel">Annuleren</string>
     <string name="action_settings">Instellingen</string>
-    <string name="title_activity_graph">Graph</string>
+    <string name="title_activity_graph">Beoordelingsgrafiek</string>
     <string name="section_format">Hello World from section: %1$d</string>
     <string name="title_activity_settings">Instellingen</string>
 
